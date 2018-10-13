@@ -59,7 +59,7 @@ void init_default_netif(void)
 void
 default_netif_poll(void)
 {
-  tapif_poll(&netif);
+  ethernetif_poll(&netif);
 }
 
 void

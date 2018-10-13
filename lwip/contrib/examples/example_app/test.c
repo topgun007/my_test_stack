@@ -49,6 +49,8 @@
 #include "lwip/netif.h"
 #include "lwip/api.h"
 
+#include "lwip/inet.h"
+
 #include "lwip/tcp.h"
 #include "lwip/udp.h"
 #include "lwip/dns.h"
@@ -488,7 +490,7 @@ dns_found(const char *name, const ip_addr_t *addr, void *arg)
 static void
 dns_dorequest(void *arg)
 {
-  const char* dnsname = "3com.com";
+  const char* dnsname = "www.google.com";
   ip_addr_t dnsresp;
   LWIP_UNUSED_ARG(arg);
  
@@ -496,23 +498,53 @@ dns_dorequest(void *arg)
     dns_found(dnsname, &dnsresp, 0);
   }
 }
+
+static void
+dns_dorequest_xxx(void *arg)
+{
+  u32_t i = 0;
+
+  LWIP_UNUSED_ARG(arg);
+
+  for (i = 0; i < 0xFFFF; i++)
+    ;
+ 
+}
+
 #endif /* LWIP_DNS_APP && LWIP_DNS */
 
 /* This function initializes applications */
 static void
 apps_init(void)
 {
+
+  ip_addr_t ping_addr;
+  
+
 #if LWIP_DNS_APP && LWIP_DNS
   /* wait until the netif is up (for dhcp, autoip or ppp) */
-  sys_timeout(5000, dns_dorequest, NULL);
+  sys_timeout(15000, dns_dorequest_xxx, NULL);
 #endif /* LWIP_DNS_APP && LWIP_DNS */
+
+  sys_timeout(5000, dns_dorequest, NULL);
 
 #if LWIP_CHARGEN_APP && LWIP_SOCKET
   chargen_init();
 #endif /* LWIP_CHARGEN_APP && LWIP_SOCKET */
 
 #if LWIP_PING_APP && LWIP_RAW && LWIP_ICMP
-  ping_init(&netif_default->gw);
+
+  if (0 == ipaddr_aton("10.23.26.216", &ping_addr))
+  {
+    printf ("\n *********** PING ERROR!!!!!    ******** \n");
+    exit(1);
+  }
+  else
+  {
+    ping_init(&ping_addr);  
+    printf ("\n*********** DONE PING ERROR  ******** \n");
+  }
+
 #endif /* LWIP_PING_APP && LWIP_RAW && LWIP_ICMP */
 
 #if LWIP_NETBIOS_APP && LWIP_UDP

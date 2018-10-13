@@ -344,7 +344,7 @@ struct netif {
   /** flags (@see @ref netif_flags) */
   u8_t flags;
   /** descriptive abbreviation */
-  char name[2];
+  char name[8];
   /** number of this interface. Used for @ref if_api and @ref netifapi_netif, 
    * as well as for IPv6 zones */
   u8_t num;

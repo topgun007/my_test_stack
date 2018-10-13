@@ -1619,6 +1619,7 @@ lwip_sendto(int s, const void *data, size_t size, int flags,
              (IS_SOCK_ADDR_LEN_VALID(tolen) &&
               ((to != NULL) && (IS_SOCK_ADDR_TYPE_VALID(to) && IS_SOCK_ADDR_ALIGNED(to))))),
              sock_set_errno(sock, err_to_errno(ERR_ARG)); done_socket(sock); return -1;);
+  
   LWIP_UNUSED_ARG(tolen);
 
   /* initialize a buffer */

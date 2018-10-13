@@ -386,6 +386,9 @@ ping_init(const ip_addr_t* ping_addr)
 {
   ping_target = ping_addr;
 
+  ip_addr_debug_print(PING_DEBUG, ping_target);
+  ip_addr_debug_print(PING_DEBUG, ping_target);
+
 #if PING_USE_SOCKETS
   sys_thread_new("ping_thread", ping_thread, NULL, DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
 #else /* PING_USE_SOCKETS */

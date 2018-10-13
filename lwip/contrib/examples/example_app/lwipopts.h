@@ -37,7 +37,7 @@
 #else /* LWIP_OPTTEST_FILE */
 
 #define LWIP_IPV4                  1
-#define LWIP_IPV6                  1
+#define LWIP_IPV6                  0
 
 #define NO_SYS                     0
 #define LWIP_SOCKET                (NO_SYS==0)
@@ -81,17 +81,17 @@
 
 /* #define LWIP_DBG_MIN_LEVEL         0 */
 
-#define LWIP_DBG_MIN_LEVEL              LWIP_DBG_LEVEL_ALL
-#define ETHARP_DEBUG                    LWIP_DBG_ON
-#define ETH_DEBUG                    LWIP_DBG_ON
-#define TAPIF_DEBUG                LWIP_DBG_ON
+#define LWIP_DBG_MIN_LEVEL         LWIP_DBG_LEVEL_ALL
+#define ETHARP_DEBUG               LWIP_DBG_OFF
+#define ETH_DEBUG                  LWIP_DBG_ON
+#define TAPIF_DEBUG                LWIP_DBG_OFF
 #define PPP_DEBUG                  LWIP_DBG_OFF
 #define MEM_DEBUG                  LWIP_DBG_OFF
 #define MEMP_DEBUG                 LWIP_DBG_OFF
 #define PBUF_DEBUG                 LWIP_DBG_OFF
 #define API_LIB_DEBUG              LWIP_DBG_OFF
 #define API_MSG_DEBUG              LWIP_DBG_OFF
-#define TCPIP_DEBUG                LWIP_DBG_ON
+#define TCPIP_DEBUG                LWIP_DBG_OFF
 #define NETIF_DEBUG                LWIP_DBG_ON
 #define SOCKETS_DEBUG              LWIP_DBG_OFF
 #define DNS_DEBUG                  LWIP_DBG_OFF

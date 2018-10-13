@@ -7,6 +7,8 @@
 # subdir via add_subdirectory()
 # The intention is to provide greater flexibility to users to 
 # create their own targets using the *_SRCS variables.
+#${LWIP_CONTRIB_DIR}/ports/unix/port/netif/tapif.c
+    
 
 include_guard(GLOBAL)
 
@@ -18,7 +20,7 @@ set(lwipcontribportunix_SRCS
 )
 
 set(lwipcontribportunixnetifs_SRCS
-    ${LWIP_CONTRIB_DIR}/ports/unix/port/netif/tapif.c
+    ${LWIP_CONTRIB_DIR}/ports/unix/port/netif/ethernetif.c
     ${LWIP_CONTRIB_DIR}/ports/unix/port/netif/list.c
     ${LWIP_CONTRIB_DIR}/ports/unix/port/netif/sio.c
     ${LWIP_CONTRIB_DIR}/ports/unix/port/netif/fifo.c

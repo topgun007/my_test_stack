@@ -245,6 +245,7 @@ tcpip_inpkt(struct pbuf *p, struct netif *inp, netif_input_fn input_fn)
   LOCK_TCPIP_CORE();
   ret = input_fn(p, inp);
   UNLOCK_TCPIP_CORE();
+  LWIP_DEBUGF(TCPIP_DEBUG, ("tcpip_inpkt: ++ 0 %d \n", ret));
   return ret;
 #else /* LWIP_TCPIP_CORE_LOCKING_INPUT */
   struct tcpip_msg *msg;
@@ -252,7 +253,9 @@ tcpip_inpkt(struct pbuf *p, struct netif *inp, netif_input_fn input_fn)
   LWIP_ASSERT("Invalid mbox", sys_mbox_valid_val(tcpip_mbox));
 
   msg = (struct tcpip_msg *)memp_malloc(MEMP_TCPIP_MSG_INPKT);
-  if (msg == NULL) {
+  if (msg == NULL) 
+  {
+    LWIP_DEBUGF(TCPIP_DEBUG, ("tcpip_inpkt: ++ 1\n"));
     return ERR_MEM;
   }
 
@@ -260,7 +263,9 @@ tcpip_inpkt(struct pbuf *p, struct netif *inp, netif_input_fn input_fn)
   msg->msg.inp.p = p;
   msg->msg.inp.netif = inp;
   msg->msg.inp.input_fn = input_fn;
-  if (sys_mbox_trypost(&tcpip_mbox, msg) != ERR_OK) {
+  if (sys_mbox_trypost(&tcpip_mbox, msg) != ERR_OK) 
+  {
+    LWIP_DEBUGF(TCPIP_DEBUG, ("tcpip_inpkt: ++ 2\n"));
     memp_free(MEMP_TCPIP_MSG_INPKT, msg);
     return ERR_MEM;
   }

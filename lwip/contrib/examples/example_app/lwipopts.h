@@ -37,9 +37,9 @@
 #else /* LWIP_OPTTEST_FILE */
 
 #define LWIP_IPV4                  1
-#define LWIP_IPV6                  0
+#define LWIP_IPV6                  1
 
-#define NO_SYS                     0
+#define NO_SYS                     1
 #define LWIP_SOCKET                (NO_SYS==0)
 #define LWIP_NETCONN               (NO_SYS==0)
 #define LWIP_NETIF_API             (NO_SYS==0)
@@ -92,7 +92,7 @@
 #define API_LIB_DEBUG              LWIP_DBG_OFF
 #define API_MSG_DEBUG              LWIP_DBG_OFF
 #define TCPIP_DEBUG                LWIP_DBG_OFF
-#define NETIF_DEBUG                LWIP_DBG_ON
+#define NETIF_DEBUG                LWIP_DBG_OFF
 #define SOCKETS_DEBUG              LWIP_DBG_OFF
 #define DNS_DEBUG                  LWIP_DBG_OFF
 #define AUTOIP_DEBUG               LWIP_DBG_OFF
@@ -111,6 +111,7 @@
 #define TCP_FR_DEBUG               LWIP_DBG_OFF
 #define TCP_QLEN_DEBUG             LWIP_DBG_OFF
 #define TCP_RST_DEBUG              LWIP_DBG_OFF
+#define LWIP_DEBUG_TIMERNAMES      LWIP_DBG_ON
 #endif
 
 #define LWIP_DBG_TYPES_ON         (LWIP_DBG_ON|LWIP_DBG_TRACE|LWIP_DBG_STATE|LWIP_DBG_FRESH|LWIP_DBG_HALT)
@@ -150,6 +151,8 @@ a lot of data that needs to be copied, this should be set high. */
 /* MEMP_NUM_SYS_TIMEOUT: the number of simulateously active
    timeouts. */
 #define MEMP_NUM_SYS_TIMEOUT    17
+
+#define MEMP_OVERFLOW_CHECK             1
 
 /* The following four are used only with the sequential API and can be
    set to 0 if the application only will use the raw API. */
@@ -253,6 +256,12 @@ a lot of data that needs to be copied, this should be set high. */
 #define DHCP_DOES_ARP_CHECK    (LWIP_DHCP)
 
 
+#define LWIP_IPV6_DHCP6                 1
+#define LWIP_IPV6_DHCP6_STATEFUL        0
+#define LWIP_IPV6_DHCP6_STATELESS       LWIP_IPV6_DHCP6
+
+
+
 /* ---------- AUTOIP options ------- */
 #define LWIP_AUTOIP            (LWIP_DHCP)
 #define LWIP_DHCP_AUTOIP_COOP  (LWIP_DHCP && LWIP_AUTOIP)
@@ -292,7 +301,7 @@ a lot of data that needs to be copied, this should be set high. */
 
 /* ---------- PPP options ---------- */
 
-#define PPP_SUPPORT             1      /* Set > 0 for PPP */
+#define PPP_SUPPORT             0      /* Set > 0 for PPP */
 
 #if PPP_SUPPORT
 

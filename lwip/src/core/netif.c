@@ -744,6 +744,9 @@ netif_set_addr(struct netif *netif, const ip4_addr_t *ipaddr, const ip4_addr_t *
     netif_invoke_ext_callback(netif, change_reason, &cb_args);
   }
 #endif
+
+  netif->flags |= NETIF_FLAG_UP | NETIF_FLAG_LINK_UP;
+  
 }
 #endif /* LWIP_IPV4*/
 

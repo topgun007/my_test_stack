@@ -41,7 +41,6 @@ set(LWIP_COMPILER_FLAGS_GNU_CLANG
     -Wshadow
     -Wpointer-arith
     -Wcast-qual
-    -Wc++-compat
     -Wwrite-strings
     -Wold-style-definition
     -Wcast-align

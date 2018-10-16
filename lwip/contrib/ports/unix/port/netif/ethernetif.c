@@ -112,7 +112,9 @@ struct ethernetif
 /* Forward declarations. */
 static void  ethernetif_input(struct netif *netif);
 
+#if !NO_SYS
 static void  ethernetif_thread(void *arg);
+#endif
 
 /**
  * In this function, the hardware should be initialized.
@@ -208,6 +210,41 @@ low_level_ethernetif_init(struct netif *netif)
   /* Create a thread to receive ethernet packets */
 #if !NO_SYS
   sys_thread_new("ethernetif_thread", ethernetif_thread, netif, DEFAULT_THREAD_STACKSIZE, DEFAULT_THREAD_PRIO);
+#else
+
+  /** Create receiving socket **/
+  /* Open PF_PACKET socket, listening for EtherType ETHER_TYPE */
+  if ((ethernetif->recv_sockfd = socket(PF_PACKET, SOCK_RAW, htons(ETH_P_ALL))) == -1) 
+  {
+    perror("listener: socket"); 
+    exit(EXIT_FAILURE);
+  }
+
+  /* Set interface to promiscuous mode - do we need to do this every time? */
+  strncpy(ethernetif->ifopts.ifr_name, ethernetif->ifName, IFNAMSIZ-1);
+  ioctl(ethernetif->recv_sockfd, SIOCGIFFLAGS, &ethernetif->ifopts);
+
+  ethernetif->ifopts.ifr_flags |= IFF_PROMISC;
+  ioctl(ethernetif->recv_sockfd, SIOCSIFFLAGS, &ethernetif->ifopts);
+
+  /* Allow the socket to be reused - incase connection is closed prematurely */
+  if (setsockopt(ethernetif->recv_sockfd, SOL_SOCKET, SO_REUSEADDR, &ethernetif->sockopt, sizeof (int)) == -1) 
+  {
+    perror("setsockopt");
+    close(ethernetif->recv_sockfd);
+    exit(EXIT_FAILURE);
+  }
+
+  /* Bind to device */
+  if (setsockopt(ethernetif->recv_sockfd, SOL_SOCKET, SO_BINDTODEVICE, ethernetif->ifName, IFNAMSIZ-1) == -1)  
+  {
+    perror("SO_BINDTODEVICE");
+    close(ethernetif->recv_sockfd);
+    exit(EXIT_FAILURE);
+  }
+
+  printf("listener: Waiting to recvfrom...\n");
+
 #endif /* !NO_SYS */
 
 }
@@ -255,12 +292,12 @@ low_level_ethernetif_output(struct netif *netif, struct pbuf *p)
 
   /* signal that packet should be sent(); */
   /* Destination MAC */
-  ethernetif->socket_address.sll_addr[0] = buf[6]; 
-  ethernetif->socket_address.sll_addr[1] = buf[7]; 
-  ethernetif->socket_address.sll_addr[2] = buf[8]; 
-  ethernetif->socket_address.sll_addr[3] = buf[9]; 
-  ethernetif->socket_address.sll_addr[4] = buf[10]; 
-  ethernetif->socket_address.sll_addr[5] = buf[11]; 
+  ethernetif->socket_address.sll_addr[0] = buf[0]; 
+  ethernetif->socket_address.sll_addr[1] = buf[1]; 
+  ethernetif->socket_address.sll_addr[2] = buf[2]; 
+  ethernetif->socket_address.sll_addr[3] = buf[3]; 
+  ethernetif->socket_address.sll_addr[4] = buf[4]; 
+  ethernetif->socket_address.sll_addr[5] = buf[5]; 
 
   written = sendto(ethernetif->send_sockfd, buf, p->tot_len, 0, (struct sockaddr*)&ethernetif->socket_address, sizeof(struct sockaddr_ll));
   if (written < p->tot_len) 
@@ -493,12 +530,14 @@ ethernetif_poll(struct netif *netif)
 
 #if NO_SYS
 
+#if 0
 int
 ethernetif_select(struct netif *netif)
 {
   /** NOT SURE WHAT TO DO HERE! **/
   return -1;
 }
+#endif
 
 #else /* NO_SYS */
 

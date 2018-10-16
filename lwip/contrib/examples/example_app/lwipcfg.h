@@ -70,7 +70,7 @@
 #define LWIP_LWIPERF_APP              0
 
 #define USE_DHCP    1
-/*#define USE_AUTOIP  1*/
+#define USE_AUTOIP  1
 
 /* define this to your custom application-init function */
 /* #define LWIP_APP_INIT my_app_init() */

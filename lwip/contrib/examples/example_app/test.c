@@ -268,6 +268,7 @@ ppp_output_cb(ppp_pcb *pcb, u8_t *data, u32_t len, void *ctx)
 #endif /* USE_PPP */
 
 #if LWIP_NETIF_STATUS_CALLBACK
+
 static void
 status_callback(struct netif *state_netif)
 {
@@ -480,11 +481,22 @@ test_netif_init(void)
 }
 
 #if LWIP_DNS_APP && LWIP_DNS
+
+static u32_t dns_done = 0;
+
 static void
 dns_found(const char *name, const ip_addr_t *addr, void *arg)
 {
   LWIP_UNUSED_ARG(arg);
   printf("%s: %s\n", name, addr ? ipaddr_ntoa(addr) : "<not found>");
+
+#if LWIP_PING_APP && LWIP_RAW && LWIP_ICMP
+
+  ping_init(addr);  
+  printf ("\n*********** DONE PING  ******** \n");
+
+#endif /* LWIP_PING_APP && LWIP_RAW && LWIP_ICMP */  
+
 }
 
 static void
@@ -494,21 +506,13 @@ dns_dorequest(void *arg)
   ip_addr_t dnsresp;
   LWIP_UNUSED_ARG(arg);
  
-  if (dns_gethostbyname(dnsname, &dnsresp, dns_found, 0) == ERR_OK) {
+  if (dns_gethostbyname(dnsname, &dnsresp, dns_found, 0) == ERR_OK) 
+  {
     dns_found(dnsname, &dnsresp, 0);
   }
-}
 
-static void
-dns_dorequest_xxx(void *arg)
-{
-  u32_t i = 0;
+  dns_done = 1;
 
-  LWIP_UNUSED_ARG(arg);
-
-  for (i = 0; i < 0xFFFF; i++)
-    ;
- 
 }
 
 #endif /* LWIP_DNS_APP && LWIP_DNS */
@@ -518,21 +522,16 @@ static void
 apps_init(void)
 {
 
-  ip_addr_t ping_addr;
-  
 
 #if LWIP_DNS_APP && LWIP_DNS
+  
   /* wait until the netif is up (for dhcp, autoip or ppp) */
-  sys_timeout(15000, dns_dorequest_xxx, NULL);
-#endif /* LWIP_DNS_APP && LWIP_DNS */
+  sys_timeout(5000, dns_dorequest, NULL);  
 
-  sys_timeout(5000, dns_dorequest, NULL);
-
-#if LWIP_CHARGEN_APP && LWIP_SOCKET
-  chargen_init();
-#endif /* LWIP_CHARGEN_APP && LWIP_SOCKET */
+#else  
 
 #if LWIP_PING_APP && LWIP_RAW && LWIP_ICMP
+  ip_addr_t ping_addr;
 
   if (0 == ipaddr_aton("10.23.26.216", &ping_addr))
   {
@@ -542,20 +541,28 @@ apps_init(void)
   else
   {
     ping_init(&ping_addr);  
-    printf ("\n*********** DONE PING ERROR  ******** \n");
+    printf ("\n*********** DONE PING  ******** \n");
   }
 
 #endif /* LWIP_PING_APP && LWIP_RAW && LWIP_ICMP */
+#endif /* LWIP_DNS_APP && LWIP_DNS */
+  
+#if LWIP_CHARGEN_APP && LWIP_SOCKET
+  chargen_init();
+#endif /* LWIP_CHARGEN_APP && LWIP_SOCKET */
 
 #if LWIP_NETBIOS_APP && LWIP_UDP
   netbiosns_init();
 #ifndef NETBIOS_LWIP_NAME
+
 #if LWIP_NETIF_HOSTNAME
   netbiosns_set_name(netif_default->hostname);
 #else
   netbiosns_set_name("NETBIOSLWIPDEV");
 #endif
+
 #endif
+
 #endif /* LWIP_NETBIOS_APP && LWIP_UDP */
 
 #if LWIP_HTTPD_APP && LWIP_TCP

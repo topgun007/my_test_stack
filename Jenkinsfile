@@ -1,5 +1,5 @@
 pipeline {
-	agent linux-node
+	agent { node { label 'linux-node' } }
 	stages {
 		stage ('get code') {
 			steps {

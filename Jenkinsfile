@@ -4,6 +4,7 @@ pipeline {
 		stage ('get code') {
 			steps {
 				sh 'ls -la'
+				sh 'lwip'
 				sh 'mkdir build'
 				sh 'cd build'
 			}

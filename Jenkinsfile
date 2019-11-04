@@ -5,6 +5,7 @@ pipeline {
 			steps {
 				sh 'ls -la'
 				sh 'cd lwip'
+				sh 'ls -la'
 				sh 'mkdir build'
 				sh 'cd build'
 			}

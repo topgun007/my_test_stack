@@ -4,4 +4,6 @@ mkdir build
 ls -la 
 cd build
 ls -la
+cmake ..
+make
 echo "done !!!"

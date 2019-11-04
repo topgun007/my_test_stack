@@ -3,9 +3,7 @@ pipeline {
 	stages {
 		stage ('get code') {
 			steps {
-				sh 'cd lwip'
-				sh 'mkdir build'
-				sh 'cd build'
+				sh './build.sh'
 			}
 		}
 		stage ('build') {
